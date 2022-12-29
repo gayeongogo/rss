@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>신문사 연동(조선일보 rss 가져오기)</title>
+    <style>
+        .chosunNews{width: 800px; height: auto; padding: 10px 20px; border: 5px solid #ddd; margin: 50px auto; position: relative;}
+        .chosunNews::before{
+            content: "조선 스포츠";
+            width: 100px;
+            height: 30px;
+            background: #ddd;
+            color: #222;
+            position: absolute;
+            top: -35px;
+            left: 10px;
+            text-align: center;
+            padding-top: 5px;
+        }
+        ul{list-style: none;}
+        li{line-height: 180%; border-bottom: 1px solid #ccc;}
+    </style>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script>
+        $(function(){
+            $.ajax({
+                url:"news.php",
+                dataType:"xml",
+                success:function(data){
+                    let $items=$(data).find('item');
+                    if($items.length > 0){
+                        $items=$items.slice(0, 20) //item 0부터 20개까지 잘라오기
+                        let $ulTag=$('<ul />');
+                        $.each($items,function(i, o){ //변수 i,o -> item, object
+                            let $title=$(o).find("title").text(); //title 가져옴
+                            let $link=$(o).find("link").text(); //link 가져옴
+                            let $description=$(o).find("description").text(); //description 가져옴
+
+                            let $aTag=$('<a />').attr({'href': $link, 'target':'_blank'}).text($title)
+                            let $liTag=$('<li />').append($aTag) //li 안에 a 넣기
+
+                            $ulTag.append($liTag)
+                        })
+                        $('.chosunNews').append($ulTag);
+                    }
+                }
+            })
+        });
+    </script>
+</head>
+<body>
+    <div class="chosunNews">
+        
+    </div>
+</body>
+</html>
